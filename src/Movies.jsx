@@ -2,19 +2,20 @@ import React, { Component } from "react";
 import { getMovies } from "./services/fakeMovieService";
 import Like from "./Like";
 import Pagination from "./pagination";
-import genre, { getGenres } from "./services/fakeGenreService";
+import { getGenres } from "./services/fakeGenreService";
 import { paginate } from "./utils/paginate";
 import ListGroup from "./ListGroup";
 class Movies extends Component {
   state = {
     movies: [],
-    pageSize: 4,
-    currentPage: 1,
+    pageSize: 3,
+    currentPage: 0,
     genre: [],
     selected_genre: 0
   };
   componentDidMount() {
-    this.setState({ movies: getMovies(), genre: getGenres() });
+    const genre = [{ name: "All Genre" }, ...getGenres()];
+    this.setState({ movies: getMovies(), genre: genre });
   }
   onDelete = movie => {
     const movies = this.state.movies.filter(m => m._id !== movie._id);
@@ -29,11 +30,15 @@ class Movies extends Component {
   };
   render() {
     const count = this.state.movies.length;
-    const { pageSize, currentPage, movies } = this.state;
+    const { pageSize, currentPage, movies, selected_genre } = this.state;
     if (this.state.movies.length === 0) {
       return <h2>There is no Movies Available</h2>;
     }
-    const movie = paginate(movies, currentPage, pageSize);
+    const filtered =
+      selected_genre && selected_genre._id
+        ? movies.filter(f => f.genre._id === this.state.selected_genre._id)
+        : movies;
+    const movie = paginate(filtered, currentPage, pageSize);
 
     return (
       <div className="row">
@@ -85,7 +90,7 @@ class Movies extends Component {
             </tbody>
           </table>
           <Pagination
-            itemCount={count}
+            itemCount={filtered.length}
             pageSize={pageSize}
             currentPage={currentPage}
             onPageChange={this.handlePageChange}

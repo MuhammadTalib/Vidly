@@ -1,11 +1,11 @@
-import React, { Component } from "react";
+import React from "react";
 const ListGroup = props => {
   const {
     item,
-    textProperty,
-    valueProperty,
     selecteditem,
-    ongenreselect
+    ongenreselect,
+    textProperty,
+    valueProperty
   } = props;
   return (
     <ul className="list-group">
@@ -23,6 +23,10 @@ const ListGroup = props => {
       ))}
     </ul>
   );
+};
+ListGroup.defaultProps = {
+  textProperty: "name",
+  valueProperty: "_id"
 };
 
 export default ListGroup;
